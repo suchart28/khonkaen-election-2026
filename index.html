@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงานผลการเลือกตั้งขอนแก่น 11 เขต</title>
+    <title>Dashboard เลือกตั้งขอนแก่น 2026</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #f0f2f5;
+            --bg-color: #f4f7f9;
             --card-white: #ffffff;
-            --text-main: #1a202c;
-            --accent-dark: #1a202c;
+            --text-dark: #2d3748;
+            --accent: #1a202c;
         }
 
         body {
@@ -20,130 +20,101 @@
             background-color: var(--bg-color);
             margin: 0;
             padding: 20px;
-            color: var(--text-main);
+            color: var(--text-dark);
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
 
-        /* สไตล์นาฬิกาตัวใหญ่ */
-        .clock-container {
+        /* นาฬิกาตัวใหญ่ */
+        .clock-section {
             text-align: center;
-            background: var(--accent-dark);
-            color: #00ff00; /* สีเขียวแบบดิจิทัล หรือเปลี่ยนเป็นสีขาวได้ */
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        #digital-clock {
-            font-family: 'JetBrains Mono', monospace; /* ฟอนต์สไตล์ตัวเลข */
-            font-size: 4rem;
-            font-weight: 500;
-            line-height: 1;
-            margin: 0;
-            letter-spacing: 2px;
-        }
-
-        .date-display {
-            font-size: 1.2rem;
-            color: #a0aec0;
-            margin-top: 5px;
-        }
-
-        .header {
-            text-align: center;
+            background: var(--accent);
+            color: #00ff00;
+            padding: 25px;
+            border-radius: 20px;
             margin-bottom: 30px;
-            padding: 20px;
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
+        #digital-clock { font-family: 'JetBrains Mono', monospace; font-size: 4.5rem; margin: 0; line-height: 1; }
+        .date-display { color: #a0aec0; font-size: 1.2rem; margin-top: 10px; }
 
+        /* ส่วนหัว */
+        .main-title { text-align: center; margin-bottom: 10px; }
+        .main-title h1 { font-size: 2rem; margin: 0; }
+
+        /* กราฟสรุปภาพรวมจังหวัด */
+        .summary-section {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .summary-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 20px; text-align: center; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; }
+        .summary-bar-item { margin-bottom: 15px; }
+        .summary-info { display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: bold; }
+        .summary-bar-bg { background: #edf2f7; height: 20px; border-radius: 10px; overflow: hidden; }
+        .summary-bar-fill { height: 100%; transition: width 1.5s ease-in-out; }
+
+        /* กริตแสดงผลรายเขต */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 25px;
         }
-
         .card {
             background: var(--card-white);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            border-top: 10px solid var(--party-color, #cbd5e0);
-            transition: all 0.3s ease;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            border-top: 12px solid var(--party-color, #cbd5e0);
+            transition: transform 0.2s;
         }
+        .card:hover { transform: translateY(-5px); }
 
-        .district-id { font-size: 0.85rem; font-weight: bold; color: #718096; text-transform: uppercase; }
-        .district-name { font-size: 1.3rem; font-weight: bold; margin: 5px 0 20px 0; color: #2d3748; }
+        /* รายละเอียดในเขต */
+        .dist-id { color: #718096; font-weight: bold; font-size: 0.9rem; }
+        .dist-name { font-size: 1.3rem; font-weight: bold; margin: 5px 0 20px 0; }
+        .rank-item { margin-bottom: 15px; }
+        .rank-txt { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 4px; }
+        .vote-num { font-weight: bold; background: #f7fafc; padding: 2px 8px; border-radius: 6px; }
+        .bar-outer { background: #edf2f7; height: 10px; border-radius: 5px; overflow: hidden; }
+        .bar-inner { height: 100%; transition: width 1s ease-out; }
 
-        .rank-row { margin-bottom: 15px; }
-        .rank-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.95rem; }
-        .party-name { font-weight: 700; }
-        .vote-count { font-weight: 700; background: #f7fafc; padding: 2px 8px; border-radius: 5px; }
+        .badge { background: #e6fffa; color: #2c7a7b; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; }
+        .update-tag { text-align: center; margin-top: 50px; color: #a0aec0; font-size: 0.85rem; }
 
-        .bar-container { background: #edf2f7; height: 12px; border-radius: 6px; overflow: hidden; }
-        .bar-fill { height: 100%; border-radius: 6px; transition: width 1s ease-in-out; }
-
-        .status-badge {
-            background: #e6fffa;
-            color: #2c7a7b;
-            padding: 5px 14px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.85rem;
-        }
-
-        .update-tag { text-align: center; margin-top: 40px; color: #a0aec0; font-size: 0.85rem; }
-
-        /* Responsive สำหรับมือถือ */
-        @media (max-width: 600px) {
-            #digital-clock { font-size: 2.5rem; }
-            .container { padding: 10px; }
-        }
+        @media (max-width: 600px) { #digital-clock { font-size: 2.8rem; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="clock-container">
+    <div class="clock-section">
         <div id="digital-clock">00:00:00</div>
-        <div class="date-display" id="current-date">วันเสาร์ที่ 7 กุมภาพันธ์ 2569</div>
+        <div class="date-display" id="current-date">--</div>
     </div>
 
-    <div class="header">
-        <h1 style="margin:0; font-size: 1.5rem;">🗳️ ผลการเลือกตั้งจังหวัดขอนแก่น (11 เขต)</h1>
+    <div class="main-title">
+        <h1>🗳️ ผลการเลือกตั้งจังหวัดขอนแก่น</h1>
+        <p style="color: #718096;">สรุปคะแนนเรียลไทม์จากทั้ง 11 เขตเลือกตั้ง</p>
+    </div>
+
+    <div class="summary-section">
+        <div class="summary-title">📊 คะแนนรวมทั้งจังหวัด (Popular Vote)</div>
+        <div id="summary-chart">
+            <p style="text-align: center;">กำลังคำนวณคะแนนรวม...</p>
+        </div>
     </div>
 
     <div id="dashboard" class="grid">
-        <div style="text-align: center; grid-column: 1/-1; padding: 40px;">กำลังโหลดข้อมูลคะแนนสด...</div>
+        <div style="text-align: center; grid-column: 1/-1;">กำลังโหลดข้อมูลรายเขต...</div>
     </div>
 
     <p class="update-tag" id="last-sync"></p>
 </div>
 
 <script>
-    // 1. ฟังก์ชันนาฬิกา
-    function updateClock() {
-        const now = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        
-        // รูปแบบเวลา
-        const timeStr = now.toLocaleTimeString('th-TH', { hour12: false });
-        document.getElementById('digital-clock').innerText = timeStr;
-        
-        // รูปแบบวันที่
-        const dateStr = now.toLocaleDateString('th-TH', options);
-        document.getElementById('current-date').innerText = dateStr;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // 2. ดึงข้อมูลจาก Google Sheets ของคุณ
     const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR-U13eCHZLz7sBikTEuqJf6olHfVBi79LC3j6OWdp-WnAqBbRllssoVzS_-DQNGHu_3IvgUw2KRYGH/pub?gid=557174576&single=true&output=csv';
 
     function getPartyColor(name) {
@@ -156,61 +127,87 @@
         return colors[name?.trim()] || '#cbd5e0';
     }
 
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('digital-clock').innerText = now.toLocaleTimeString('th-TH');
+        document.getElementById('current-date').innerText = now.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
     function init() {
         Papa.parse(SHEET_URL, {
-            download: true,
-            header: true,
+            download: true, header: true,
             complete: function(results) {
-                const container = document.getElementById('dashboard');
-                container.innerHTML = '';
-                
-                results.data.forEach(item => {
-                    if (!item['เขต']) return;
-
-                    const v1 = parseInt(String(item['คะแนน 1']).replace(/,/g, '')) || 0;
-                    const v2 = parseInt(String(item['คะแนน 2']).replace(/,/g, '')) || 0;
-                    const v3 = parseInt(String(item['คะแนน 3']).replace(/,/g, '')) || 0;
-                    const max = v1 || 1;
-
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.style.setProperty('--party-color', getPartyColor(item['อันดับ 1 (พรรค)']));
-
-                    card.innerHTML = `
-                        <div class="district-id">เขตเลือกตั้งที่ ${item['เขต']}</div>
-                        <div class="district-name">${item['พื้นที่/อำเภอ']}</div>
-                        ${renderRank(1, item['อันดับ 1 (พรรค)'], v1, max)}
-                        ${renderRank(2, item['อันดับ 2 (พรรค)'], v2, max)}
-                        ${renderRank(3, item['อันดับ 3 (พรรค)'], v3, max)}
-                        <div style="margin-top:20px; text-align:right;">
-                            <span class="status-badge">นับแล้ว ${item['นับแล้ว (%)'] || '0%'}</span>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-                document.getElementById('last-sync').innerText = "ซิงค์ข้อมูลล่าสุดเมื่อ: " + new Date().toLocaleTimeString('th-TH');
+                processData(results.data);
             }
         });
     }
 
-    function renderRank(rank, name, vote, max) {
-        const color = getPartyColor(name);
-        const width = (vote / max) * 100;
-        return `
-            <div class="rank-row">
-                <div class="rank-header">
-                    <span class="party-name">${rank}. ${name || 'รอผล'}</span>
-                    <span class="vote-count">${vote.toLocaleString()}</span>
+    function processData(data) {
+        const dashboard = document.getElementById('dashboard');
+        const summaryChart = document.getElementById('summary-chart');
+        dashboard.innerHTML = '';
+        
+        let provinceVotes = {}; // เก็บผลรวมคะแนนรายพรรค
+        let totalProvinceVote = 0;
+
+        data.forEach(item => {
+            if (!item['เขต']) return;
+
+            const ranks = [
+                { name: item['อันดับ 1 (พรรค)'], vote: parseInt(String(item['คะแนน 1']).replace(/,/g, '')) || 0 },
+                { name: item['อันดับ 2 (พรรค)'], vote: parseInt(String(item['คะแนน 2']).replace(/,/g, '')) || 0 },
+                { name: item['อันดับ 3 (พรรค)'], vote: parseInt(String(item['คะแนน 3']).replace(/,/g, '')) || 0 }
+            ];
+
+            // สะสมคะแนนรวมทั้งจังหวัด
+            ranks.forEach(r => {
+                if(r.name && r.name !== '-') {
+                    provinceVotes[r.name] = (provinceVotes[r.name] || 0) + r.vote;
+                }
+            });
+
+            // สร้าง Card รายเขต
+            const maxAreaVote = ranks[0].vote || 1;
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.style.setProperty('--party-color', getPartyColor(ranks[0].name));
+            
+            let rankHtml = ranks.map((r, i) => `
+                <div class="rank-item">
+                    <div class="rank-txt"><span>${i+1}. ${r.name || 'รอผล'}</span><span class="vote-num">${r.vote.toLocaleString()}</span></div>
+                    <div class="bar-outer"><div class="bar-inner" style="width:${(r.vote/maxAreaVote)*100}%; background:${getPartyColor(r.name)}"></div></div>
                 </div>
-                <div class="bar-container">
-                    <div class="bar-fill" style="width: ${width}%; background: ${color}"></div>
+            `).join('');
+
+            card.innerHTML = `
+                <div class="dist-id">ขอนแก่น • เขต ${item['เขต']}</div>
+                <div class="dist-name">${item['พื้นที่/อำเภอ']}</div>
+                ${rankHtml}
+                <div style="margin-top:20px; text-align:right;"><span class="badge">นับแล้ว ${item['นับแล้ว (%)'] || '0%'}</span></div>
+            `;
+            dashboard.appendChild(card);
+        });
+
+        // สร้างกราฟสรุปภาพรวม
+        const sortedParties = Object.entries(provinceVotes).sort((a, b) => b[1] - a[1]);
+        const maxProvinceVote = sortedParties[0]?.[1] || 1;
+        
+        summaryChart.innerHTML = sortedParties.slice(0, 5).map(([name, vote]) => `
+            <div class="summary-bar-item">
+                <div class="summary-info"><span>${name}</span><span>${vote.toLocaleString()} คะแนน</span></div>
+                <div class="summary-bar-bg">
+                    <div class="summary-bar-fill" style="width:${(vote/maxProvinceVote)*100}%; background:${getPartyColor(name)}"></div>
                 </div>
             </div>
-        `;
+        `).join('');
+
+        document.getElementById('last-sync').innerText = "อัปเดตล่าสุด: " + new Date().toLocaleTimeString('th-TH');
     }
 
     init();
-    setInterval(init, 30000); // อัปเดตข้อมูลทุก 30 วินาที
+    setInterval(init, 30000);
 </script>
 </body>
 </html>
