@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>รายงานผลการเลือกตั้งขอนแก่น 11 เขต</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --bg-color: #f0f2f5;
             --card-white: #ffffff;
             --text-main: #1a202c;
+            --accent-dark: #1a202c;
         }
 
         body {
@@ -20,7 +21,6 @@
             margin: 0;
             padding: 20px;
             color: var(--text-main);
-            line-height: 1.6;
         }
 
         .container {
@@ -28,14 +28,39 @@
             margin: 0 auto;
         }
 
+        /* สไตล์นาฬิกาตัวใหญ่ */
+        .clock-container {
+            text-align: center;
+            background: var(--accent-dark);
+            color: #00ff00; /* สีเขียวแบบดิจิทัล หรือเปลี่ยนเป็นสีขาวได้ */
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        #digital-clock {
+            font-family: 'JetBrains Mono', monospace; /* ฟอนต์สไตล์ตัวเลข */
+            font-size: 4rem;
+            font-weight: 500;
+            line-height: 1;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        .date-display {
+            font-size: 1.2rem;
+            color: #a0aec0;
+            margin-top: 5px;
+        }
+
         .header {
             text-align: center;
             margin-bottom: 30px;
-            padding: 30px;
-            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            padding: 20px;
+            background: #fff;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         .grid {
@@ -49,33 +74,20 @@
             border-radius: 16px;
             padding: 24px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            position: relative;
             border-top: 10px solid var(--party-color, #cbd5e0);
             transition: all 0.3s ease;
         }
 
-        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-
-        .district-id { font-size: 0.85rem; font-weight: bold; color: #718096; text-transform: uppercase; letter-spacing: 1px; }
+        .district-id { font-size: 0.85rem; font-weight: bold; color: #718096; text-transform: uppercase; }
         .district-name { font-size: 1.3rem; font-weight: bold; margin: 5px 0 20px 0; color: #2d3748; }
 
-        .rank-row { margin-bottom: 18px; }
-        .rank-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.95rem; }
+        .rank-row { margin-bottom: 15px; }
+        .rank-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.95rem; }
         .party-name { font-weight: 700; }
-        .vote-count { font-weight: 700; color: #2d3748; background: #f7fafc; padding: 2px 8px; border-radius: 5px; }
+        .vote-count { font-weight: 700; background: #f7fafc; padding: 2px 8px; border-radius: 5px; }
 
         .bar-container { background: #edf2f7; height: 12px; border-radius: 6px; overflow: hidden; }
-        .bar-fill { height: 100%; border-radius: 6px; transition: width 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.2); }
-
-        .card-footer {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #edf2f7;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-        }
+        .bar-fill { height: 100%; border-radius: 6px; transition: width 1s ease-in-out; }
 
         .status-badge {
             background: #e6fffa;
@@ -83,119 +95,111 @@
             padding: 5px 14px;
             border-radius: 20px;
             font-weight: bold;
-            border: 1px solid #b2f5ea;
+            font-size: 0.85rem;
         }
 
         .update-tag { text-align: center; margin-top: 40px; color: #a0aec0; font-size: 0.85rem; }
-        
-        /* สีกราฟสำหรับพรรคต่างๆ */
-        .color-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
+
+        /* Responsive สำหรับมือถือ */
+        @media (max-width: 600px) {
+            #digital-clock { font-size: 2.5rem; }
+            .container { padding: 10px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div class="clock-container">
+        <div id="digital-clock">00:00:00</div>
+        <div class="date-display" id="current-date">วันเสาร์ที่ 7 กุมภาพันธ์ 2569</div>
+    </div>
+
     <div class="header">
-        <h1 style="margin:0;">🗳️ ผลการเลือกตั้งจังหวัดขอนแก่น (11 เขต)</h1>
-        <p style="opacity: 0.9; margin-top: 10px;">ระบบรายงานผลคะแนน 3 อันดับแรกแบบเรียลไทม์</p>
+        <h1 style="margin:0; font-size: 1.5rem;">🗳️ ผลการเลือกตั้งจังหวัดขอนแก่น (11 เขต)</h1>
     </div>
 
     <div id="dashboard" class="grid">
-        <div style="text-align: center; grid-column: 1/-1; padding: 50px;">
-            <p>กำลังเชื่อมต่อฐานข้อมูล Google Sheets...</p>
-        </div>
+        <div style="text-align: center; grid-column: 1/-1; padding: 40px;">กำลังโหลดข้อมูลคะแนนสด...</div>
     </div>
 
-    <p class="update-tag" id="last-update"></p>
+    <p class="update-tag" id="last-sync"></p>
 </div>
 
 <script>
-    // เชื่อมต่อลิงก์ที่คุณส่งมา
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR-U13eCHZLz7sBikTEuqJf6olHfVBi79LC3j6OWdp-WnAqBbRllssoVzS_-DQNGHu_3IvgUw2KRYGH/pub?gid=557174576&single=true&output=csv';
+    // 1. ฟังก์ชันนาฬิกา
+    function updateClock() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        
+        // รูปแบบเวลา
+        const timeStr = now.toLocaleTimeString('th-TH', { hour12: false });
+        document.getElementById('digital-clock').innerText = timeStr;
+        
+        // รูปแบบวันที่
+        const dateStr = now.toLocaleDateString('th-TH', options);
+        document.getElementById('current-date').innerText = dateStr;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
-    // ฟังก์ชันกำหนดสีพรรคอัตโนมัติ 10 พรรคใหญ่
+    // 2. ดึงข้อมูลจาก Google Sheets ของคุณ
+    const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR-U13eCHZLz7sBikTEuqJf6olHfVBi79LC3j6OWdp-WnAqBbRllssoVzS_-DQNGHu_3IvgUw2KRYGH/pub?gid=557174576&single=true&output=csv';
+
     function getPartyColor(name) {
-        if (!name) return '#cbd5e0';
-        const party = name.trim();
         const colors = {
-            'ก้าวไกล': '#ff4500',
-            'เพื่อไทย': '#da2131',
-            'ภูมิใจไทย': '#2c3487',
-            'พลังประชารัฐ': '#1f4391',
-            'รวมไทยสร้างชาติ': '#22409a',
-            'ประชาธิปัตย์': '#00aeef',
-            'ชาติไทยพัฒนา': '#ff40ad',
-            'ประชาชาติ': '#8b4513',
-            'ไทยสร้างไทย': '#1132b8',
-            'เสรีรวมไทย': '#ffd700',
-            'อื่นๆ': '#718096'
+            'ก้าวไกล': '#ff4500', 'เพื่อไทย': '#da2131', 'ภูมิใจไทย': '#2c3487',
+            'พลังประชารัฐ': '#1f4391', 'รวมไทยสร้างชาติ': '#22409a', 'ประชาธิปัตย์': '#00aeef',
+            'ชาติไทยพัฒนา': '#ff40ad', 'ประชาชาติ': '#8b4513', 'ไทยสร้างไทย': '#1132b8',
+            'เสรีรวมไทย': '#ffd700', 'อื่นๆ': '#718096'
         };
-        return colors[party] || '#cbd5e0';
+        return colors[name?.trim()] || '#cbd5e0';
     }
 
     function init() {
-        Papa.parse(SHEET_CSV_URL, {
+        Papa.parse(SHEET_URL, {
             download: true,
             header: true,
             complete: function(results) {
-                renderDashboard(results.data);
-                document.getElementById('last-update').innerText = "ซิงค์ข้อมูลล่าสุดเมื่อ: " + new Date().toLocaleTimeString('th-TH') + " น.";
-            },
-            error: function(err) {
-                console.error("Error loading CSV:", err);
-                document.getElementById('dashboard').innerHTML = "<p style='text-align:center; grid-column:1/-1;'>ไม่สามารถโหลดข้อมูลได้ กรุณาตรวจสอบการ Publish Google Sheets</p>";
+                const container = document.getElementById('dashboard');
+                container.innerHTML = '';
+                
+                results.data.forEach(item => {
+                    if (!item['เขต']) return;
+
+                    const v1 = parseInt(String(item['คะแนน 1']).replace(/,/g, '')) || 0;
+                    const v2 = parseInt(String(item['คะแนน 2']).replace(/,/g, '')) || 0;
+                    const v3 = parseInt(String(item['คะแนน 3']).replace(/,/g, '')) || 0;
+                    const max = v1 || 1;
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.style.setProperty('--party-color', getPartyColor(item['อันดับ 1 (พรรค)']));
+
+                    card.innerHTML = `
+                        <div class="district-id">เขตเลือกตั้งที่ ${item['เขต']}</div>
+                        <div class="district-name">${item['พื้นที่/อำเภอ']}</div>
+                        ${renderRank(1, item['อันดับ 1 (พรรค)'], v1, max)}
+                        ${renderRank(2, item['อันดับ 2 (พรรค)'], v2, max)}
+                        ${renderRank(3, item['อันดับ 3 (พรรค)'], v3, max)}
+                        <div style="margin-top:20px; text-align:right;">
+                            <span class="status-badge">นับแล้ว ${item['นับแล้ว (%)'] || '0%'}</span>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+                document.getElementById('last-sync').innerText = "ซิงค์ข้อมูลล่าสุดเมื่อ: " + new Date().toLocaleTimeString('th-TH');
             }
         });
     }
 
-    function renderDashboard(data) {
-        const container = document.getElementById('dashboard');
-        container.innerHTML = '';
-
-        data.forEach(item => {
-            // ตรวจสอบว่าแถวนี้มีข้อมูลเขตหรือไม่
-            if (!item['เขต'] || item['เขต'].trim() === "") return;
-
-            const p1 = { name: item['อันดับ 1 (พรรค)'], vote: parseInt(String(item['คะแนน 1']).replace(/,/g, '')) || 0 };
-            const p2 = { name: item['อันดับ 2 (พรรค)'], vote: parseInt(String(item['คะแนน 2']).replace(/,/g, '')) || 0 };
-            const p3 = { name: item['อันดับ 3 (พรรค)'], vote: parseInt(String(item['คะแนน 3']).replace(/,/g, '')) || 0 };
-            
-            const maxVoteForScale = p1.vote || 1; 
-            const winnerColor = getPartyColor(p1.name);
-
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.style.setProperty('--party-color', winnerColor);
-
-            card.innerHTML = `
-                <div class="district-id">ขอนแก่น • เขตเลือกตั้งที่ ${item['เขต']}</div>
-                <div class="district-name">${item['พื้นที่/อำเภอ']}</div>
-                
-                ${renderRankRow(1, p1.name, p1.vote, maxVoteForScale)}
-                ${renderRankRow(2, p2.name, p2.vote, maxVoteForScale)}
-                ${renderRankRow(3, p3.name, p3.vote, maxVoteForScale)}
-
-                <div class="card-footer">
-                    <span>นับคะแนนแล้ว</span>
-                    <span class="status-badge">${item['นับแล้ว (%)'] || '0%'}</span>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    }
-
-    function renderRankRow(rank, name, vote, max) {
+    function renderRank(rank, name, vote, max) {
         const color = getPartyColor(name);
-        // คำนวณความยาว Bar โดยเทียบจากอันดับ 1
-        const width = max > 0 ? (vote / max) * 100 : 0;
-        
+        const width = (vote / max) * 100;
         return `
             <div class="rank-row">
                 <div class="rank-header">
-                    <span class="party-name">
-                        <span class="color-dot" style="background:${color}"></span>
-                        ${rank}. ${name || 'รอข้อมูล'}
-                    </span>
+                    <span class="party-name">${rank}. ${name || 'รอผล'}</span>
                     <span class="vote-count">${vote.toLocaleString()}</span>
                 </div>
                 <div class="bar-container">
@@ -205,12 +209,8 @@
         `;
     }
 
-    // เริ่มทำงานครั้งแรก
     init();
-    
-    // ตั้งเวลาอัปเดตอัตโนมัติทุก 30 วินาที
-    setInterval(init, 30000);
+    setInterval(init, 30000); // อัปเดตข้อมูลทุก 30 วินาที
 </script>
-
 </body>
 </html>
